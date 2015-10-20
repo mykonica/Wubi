@@ -1,7 +1,7 @@
 #include "com_example_wubi_WubiCodeService.h"
 #include <jni.h>
 #include "wubi.h"
-
+#include <string>
 /*
  * Class:     com_example_wubi_WubiCodeService
  * Method:    nativeQueryWubiCode
@@ -15,4 +15,17 @@ JNIEXPORT jstring JNICALL Java_com_example_wubi_WubiCodeService_nativeQueryWubiC
     } else {
         return 0;
     }
+}
+
+
+JNIEXPORT jstring JNICALL Java_com_example_wubi_WubiCodeService_nativeRandom
+        (JNIEnv *env, jobject self) {
+
+    const WubiCode& code = randomCode();
+
+    std::string str(code.chinese);
+    str += ": ";
+    str += code.code;
+
+    return env->NewStringUTF(str.c_str());
 }

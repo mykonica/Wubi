@@ -20,6 +20,10 @@ public class MainActivity extends ActionBarActivity {
 
         final EditText input = (EditText)findViewById(R.id.input);
         final TextView tv = (TextView)findViewById(R.id.text);
+
+        String temp = WubiCodeService.randomCode();
+        tv.setText(temp);
+
         input.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

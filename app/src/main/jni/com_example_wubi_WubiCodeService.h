@@ -15,6 +15,9 @@ extern "C" {
 JNIEXPORT jstring JNICALL Java_com_example_wubi_WubiCodeService_nativeQueryWubiCode
   (JNIEnv *, jobject, jint);
 
+JNIEXPORT jstring JNICALL Java_com_example_wubi_WubiCodeService_nativeRandom
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif
