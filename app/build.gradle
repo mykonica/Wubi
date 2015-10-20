@@ -1,0 +1,57 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        applicationId "com.example.wubi"
+        minSdkVersion 8
+        targetSdkVersion 21
+    }
+
+    sourceSets.main {
+        jni.srcDirs = [] /*disable automatic ndk-build call */
+//        jniLibs.srcDir 'libs'
+    }
+
+    task ndkBuild(type: Exec, description: 'build jni') {
+            def ndkDir = plugins.getPlugin('com.android.application').sdkHandler.getNdkFolder()
+            commandLine "$ndkDir/ndk-build",
+                    '-j4',
+                    'NDK_PROJECT_PATH=build',
+                    'APP_BUILD_SCRIPT=./src/main/jni/Android.mk',
+                    'NDK_APPLICATION_MK=./src/main/jni/Application.mk'
+    }
+
+    task ndkLibsToJar(type: Zip, dependsOn: 'ndkBuild', description: 'Create a JAR of the native libs') {
+        destinationDir new File(buildDir, 'libs')
+        baseName 'ndk-libs'
+        extension 'jar'
+        from(new File(buildDir, 'libs')) { include '**/*.so' }
+        into 'lib/'
+    }
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ["$buildDir/libs/"]
+        }
+    }
+
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:22.+'
+    compile 'com.android.support:appcompat-v7:22.+'
+}
